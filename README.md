@@ -15,18 +15,37 @@ but downloads it beforehand if it's not already downloaded.
 This way you can just put this script in your repository
 and everyone can build your app without worrying about any extra steps.
 
+## Quickstart
+
+### Unix
+
+[Click here to download](https://spietras.github.io/bazelw/bazelw) (mark as executable after) or use `curl`:
+
+```sh
+curl -O spietras.github.io/bazelw/bazelw && chmod +x bazelw
+```
+
+### Windows
+
+[Click here to download](https://spietras.github.io/bazelw/bazelw.bat) or use `curl`:
+
+```cmd
+curl -O spietras.github.io/bazelw/bazelw.bat
+```
+
 ## Usage
 
-Just put `bazelw` (Unix) and `bazelw.bat` (Windows) in your repository
-and execute whatever you want as you would with bare `Bazel`.
+Just put [`bazelw`](https://spietras.github.io/bazelw/bazelw) (Unix)
+and [`bazelw.bat`](https://spietras.github.io/bazelw/bazelw.bat) (Windows)
+in your repository and execute whatever you want as you would with bare `Bazel`.
 
-Unix:
+### Unix
 
 ```sh
 ./bazelw --help
 ```
 
-Windows:
+### Windows
 
 ```cmd
 bazelw --help
