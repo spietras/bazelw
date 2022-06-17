@@ -1,0 +1,2 @@
+# bazelw
+bazelisk wrapper 🧩
