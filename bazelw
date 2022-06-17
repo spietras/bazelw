@@ -1,0 +1,107 @@
+#!/usr/bin/env sh
+
+# Globals
+
+CACHE_DIR="$HOME/.cache/bazelisk"
+BIN_DIR="$CACHE_DIR/bin"
+BAZELISK_PATH="$BIN_DIR/bazelisk"
+
+# Utils
+
+return_string() {
+  printf "%s" "$1"
+}
+
+get_os() {
+  os="$(uname | tr '[:upper:]' '[:lower:]')"
+
+  case "$os" in
+  linux*)
+    os="linux"
+    ;;
+  darwin*)
+    os="darwin"
+    ;;
+  msys* | mingw* | cygwin*)
+    os="windows"
+    ;;
+  esac
+
+  return_string "$os"
+}
+
+get_arch() {
+  arch="$(uname -m)"
+
+  case "$arch" in
+  'x86_64' | 'amd64')
+    arch='amd64'
+    ;;
+  'aarch64' | 'aarch64_be' | 'armv8b' | 'armv8l' | 'arm64')
+    arch='arm64'
+    ;;
+  esac
+
+  return_string "$arch"
+}
+
+get_binary_url() {
+  os="$1"
+  arch="$2"
+
+  filename="bazelisk-$os-$arch"
+
+  if [ "$os" = "darwin" ] && [ "$arch" != "arm64" ] && [ "$arch" != "amd64" ]; then
+    filename="bazelisk-$os"
+  fi
+
+  if [ "$os" = "windows" ]; then
+    filename="$filename.exe"
+  fi
+
+  base_url="https://github.com/bazelbuild/bazelisk/releases/latest/download"
+
+  return_string "$base_url/$filename"
+}
+
+log() {
+  format="$1"
+  message="$2"
+
+  printf "$format" "$message"
+}
+
+log_error() {
+  log "Error: %s\n" "$1"
+}
+
+# Setup
+
+if [ ! -e "$BAZELISK_PATH" ] || [ -n "$BAZELW_UPDATE" ]; then
+  if [ ! -d "$BIN_DIR" ]; then
+    if ! mkdir -p "$BIN_DIR"; then
+      log_error "Can't create $BIN_DIR"
+      exit 1
+    fi
+  fi
+
+  os="$(get_os)"
+  arch="$(get_arch)"
+  url="$(get_binary_url "$os" "$arch")"
+
+  if ! error="$(curl -o "$BAZELISK_PATH" -fsSL "$url" 2>&1)"; then
+    log_error "Can't download $url. $error"
+    exit 2
+  fi
+
+  if [ ! -x "$BAZELISK_PATH" ]; then
+    if ! chmod +x "$BAZELISK_PATH"; then
+      log_error "Can't set executable bit for $BAZELISK_PATH"
+      exit 3
+    fi
+  fi
+fi
+
+# Execute
+
+exec "$BAZELISK_PATH" "$@"
