@@ -50,7 +50,7 @@ if defined setup (
 
     curl -o "!BAZELISK_PATH!" -fsSL "!BAZELISK_URL!" >"!TMP_ERROR_FILE!" 2>&1
 
-    if not !ERRORLEVEL! == 0  (
+    if not !ERRORLEVEL! == 0 (
         for /F "delims=" %%A in (!TMP_ERROR_FILE!) do (
             call :logError "Can't download !BAZELISK_URL! to !BAZELISK_PATH!. %%A"
         )
@@ -61,8 +61,8 @@ if defined setup (
 
 @rem Execute
 
-"!BAZELISK_PATH!" %*
+call "!BAZELISK_PATH!" %*
 set "EXITCODE=!ERRORLEVEL!"
 
 :end
-endlocal & exit /b "!EXITCODE!""
+endlocal & exit /b %EXITCODE%
